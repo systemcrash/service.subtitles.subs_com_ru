@@ -100,6 +100,8 @@ class SCRuSubtitlesService(SCRuSubtitlesListener, SCRuSubtitlesLogger):
         """Search subtitles."""
 
         download_page, referer = self._get_scru_sub_download_page()
+        if download_page or referer is None:
+            return 0
         if download_page and referer:
             self._provider.search(download_page, referer, self._languages)
 
@@ -120,7 +122,7 @@ class SCRuSubtitlesService(SCRuSubtitlesListener, SCRuSubtitlesLogger):
         if title and year:
             return self._scruapi.search(title, year)
 
-        return None
+        return None, None
 
     def on_subtitle_found(self, subtitle):
         """Event handler called when a matching subtitle has been found.

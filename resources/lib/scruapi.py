@@ -63,15 +63,20 @@ class SCRuAPI:
         #self.logger.debug(u'response HTML:' + response )
         self.logger.debug(u'\n')
 
-        #potential error here
-        downloadpageurl = u'{0}/{1}'.format(self._base_url, self._search_within_results(response, year) )
-        
-        self.logger.debug(u'Download page URL: {0}'.format(downloadpageurl) )
+        subsearch = self._search_within_results(response, year)
 
-        with closing( urlopen(downloadpageurl) ) as resultf:
-            response = resultf.read().decode('string-escape').decode("utf-8")
-            #self.logger.debug(u'response HTML:' + response )
-            return [response, downloadpageurl]
+        if subsearch is None:
+            #bail
+            self.logger.info(u'No subtitles found for the title \"{0}\" and year ({1})'.format(title, year))
+            return [None, None]
+        else:
+            #potential error here
+            downloadpageurl = u'{0}/{1}'.format(self._base_url, subsearch )
+            self.logger.debug(u'Download page URL: {0}'.format(downloadpageurl) )
+            with closing( urlopen(downloadpageurl) ) as resultf:
+                response = resultf.read().decode('string-escape').decode("utf-8")
+                #self.logger.debug(u'response HTML:' + response )
+                return [response, downloadpageurl]
 
 
 
