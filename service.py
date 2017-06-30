@@ -100,8 +100,10 @@ class SCRuSubtitlesService(SCRuSubtitlesListener, SCRuSubtitlesLogger):
         """Search subtitles."""
 
         download_page, referer = self._get_scru_sub_download_page()
-        if download_page or referer is None:
-            return 0
+        if type(download_page) and type(referer) is not unicode:
+                self.warn(u'Failed\n')
+                return 0
+        #should probably just be "else" here
         if download_page and referer:
             self._provider.search(download_page, referer, self._languages)
 
